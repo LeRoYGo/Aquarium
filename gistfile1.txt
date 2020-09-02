@@ -1,0 +1,115 @@
+using System;
+using System.Collections.Generic;
+
+namespace Aquarium
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Aquarium aquarium = new Aquarium();
+            aquarium.AquariumLife();
+        }
+    }
+
+    class Aquarium
+    {
+        private List<Fish> _fishs;
+
+        public Aquarium()
+        {
+            _fishs = new List<Fish> { new Fish(9, "Дори"), new Fish(4, "Немо"), new Fish(50, "Краш"), new Fish(7, "Марлин") };
+        }
+
+        public void AquariumLife()
+        {
+            while (true)
+            {
+                InfoAquarium();
+                Console.WriteLine("1- Добавить рыбку\n2- Убрать рыбку\n3 - Ничего не делать");
+                int userInpyt = Convert.ToInt32(Console.ReadLine());
+                switch (userInpyt)
+                {
+                    case 1:
+                        AddFish();
+                        break;
+                    case 2:
+                        DeleteFish();
+                        break;
+                    case 3:
+                        break;
+                }
+                for (int i = 0; i < _fishs.Count; i++)
+                {
+                    _fishs[i].DecreasedHealth(_fishs, i);
+                }
+                Console.Clear();
+            }
+        }
+        private void InfoAquarium()
+        {
+            Console.WriteLine("--------------------------------------------------------------------------------------");
+            if (_fishs.Count > 0)
+            {
+                for (int i = 0; i < _fishs.Count; i++)
+                {
+                    Console.WriteLine($"№{i + 1} | Имя рыбы: {_fishs[i].NameFish} | Количество здоровье: {_fishs[i].Health}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Аквариум пуст....");
+            }
+            Console.WriteLine("--------------------------------------------------------------------------------------");
+        }
+        private void AddFish()
+        {
+            if (_fishs.Count < 10)
+            {
+                Console.Write("Имя рыбы:");
+                string nameFish = Console.ReadLine();
+                Console.Write("Количество здоровья рыбы:");
+                int health = Convert.ToInt32(Console.ReadLine());
+                _fishs.Add(new Fish(health, nameFish));
+            }
+            else
+            {
+                Console.WriteLine("Аквариум полный. Нет места для рыб");
+                Console.ReadKey();
+            }
+        }
+        private void DeleteFish()
+        {
+            if (_fishs.Count > 0)
+            {
+                Console.Write("Ввидите № рыбы которую хотите убрать из аквариума:");
+                int userInpyt = Convert.ToInt32(Console.ReadLine()) - 1;
+                _fishs.RemoveAt(userInpyt);
+            }
+        }
+    }
+
+    class Fish
+    {
+        public int Health { get; private set; }
+        public string NameFish { get; private set; }
+
+        public Fish(int health, string nameFish)
+        {
+            Health = health;
+            NameFish = nameFish;
+        }
+        public void DeathFish(List<Fish> _fishs, int i)
+        {
+            _fishs.RemoveAt(i);
+        }
+        public void DecreasedHealth(List<Fish> _fishs, int i)
+        {
+            Health -= 1;
+            if (_fishs[i].Health <= 0)
+            {
+                _fishs[i].DeathFish(_fishs, i);
+            }
+        }
+    }
+}
